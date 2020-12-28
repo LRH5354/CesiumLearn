@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hello Cesium</title>
+    <style>
+        html,body {height: 100%; overflow: hidden;}
+    </style>
+   <link rel="stylesheet" href="./Script/Cesium/Widgets/widgets.css">
+   <script src="./Script/Cesium/Cesium.js"></script>
+</head>
+<body>
+    <div id='cesiumContainer' style="height:100%"></div>
+</body>
+<script>
+   var map3D = {
+        defaultLocation :{
+            lng:109.955468,
+            lat: 21.183817,
+            alt: 5000
+        }
+    };
+//    Cesium.Ion.defaultAccessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiYmQ0NDBmMy1kOWZkLTRiOWUtODNkMC02ZWI5Y2I1M2FjM2UiLCJpZCI6NDA0NjgsImlhdCI6MTYwODc5NDAyNn0.OoVB56C6gNs_sCwIpO5N65u3efc0dvYt41006iI0k00"
+   
+   var terrainProvider = Cesium.createWorldTerrain({
+            requestWaterMask: true,
+            requestVertexNormals: true
+    })
+
+    var arcgisImageProvider = new Cesium.ArcGisMapServerImageryProvider({
+        url: 'https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer',
+        enablePickFeatures: false
+     });
+
+    var bingImageProvider = new Cesium.BingMapsImageryProvider({
+        url : 'https://dev.virtualearth.net',
+        key : 'get-yours-at-https://www.bingmapsportal.com/',
+        mapStyle : Cesium.BingMapsStyle.AERIAL
+    });
+
+    var mboxImageProvider = new Cesium.MapboxStyleImageryProvider({
+        mapId: 'mapbox.satellite',
+        styleId: 'streets-v11',
+        accessToken: 'thisIsMyAccessToken'
+    }); 
+    var mtdt = new Cesium.WebMapTileServiceImageryProvider({
+        url:'http://t0.tianditu.com/img_w/wmts?',
+        layer:'img',
+        style:'default',
+        format:'tiles',
+        tileMatrixSetID:'w',
+        credit:new Cesium.Credit('天地图全球影像服务'),
+        maximumLevel:18
+        });
+    
+    var googleImageProvider = new Cesium.UrlTemplateImageryProvider({
+        url:"http://mt1.google.cn/vt/lyrs=s&hl=zh-CN&x={x}&y={y}&z={z}"
+    })
+    var viewer = new Cesium.Viewer('cesiumContainer', {
+        animation: false,
+        fullscreenButton: false,
+        baseLayerPicker:false,
+        navigationHelpButton: false,
+        timeline: false,
+        selectionIndicator: false,
+        infoBox: false,
+        imgaeryProvider:arcgisImageProvider,
+        // terrainProvider: terrainProvider
+    });
+    // 4. Fly to a position with an orientation using heading, pitch and roll.
+    viewer.camera.flyTo({
+    destination : Cesium.Cartesian3.fromDegrees(map3D.defaultLocation.lng,map3D.defaultLocation.lat,map3D.defaultLocation.alt),
+    complete:function(){
+            console.log('fly was done') 
+     }
+});
+</script>
+
+</html>
