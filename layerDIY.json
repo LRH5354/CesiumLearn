@@ -1,0 +1,27 @@
+{
+  "tilejson": "2.1.0",
+  "name": "srtm_new",
+  "description": "",
+  "version": "1.1.0",
+  "format": "quantized-mesh-1.0",
+  "attribution": "",
+  "schema": "tms",
+  "tiles": ["{z}/{x}/{y}.terrain?v={version}"],
+  "projection": "EPSG:4326",
+  "bounds": [0.0, -90.0, 180.0, 90.0],
+  "available": [
+    [{ "startX": 1, "startY": 0, "endX": 1, "endY": 0 }],
+    [{ "startX": 3, "startY": 1, "endX": 3, "endY": 1 }],
+    [{ "startX": 6, "startY": 2, "endX": 6, "endY": 2 }],
+    [{ "startX": 12, "startY": 4, "endX": 13, "endY": 5 }],
+    [{ "startX": 25, "startY": 9, "endX": 26, "endY": 10 }],
+    [{ "startX": 51, "startY": 19, "endX": 52, "endY": 20 }],
+    [{ "startX": 103, "startY": 39, "endX": 104, "endY": 40 }],
+    [{ "startX": 206, "startY": 78, "endX": 209, "endY": 81 }],
+    [{ "startX": 412, "startY": 156, "endX": 419, "endY": 163 }],
+    [{ "startX": 824, "startY": 312, "endX": 839, "endY": 327 }],
+    [{ "startX": 1649, "startY": 625, "endX": 1678, "endY": 654 }],
+    [{ "startX": 3299, "startY": 1251, "endX": 3356, "endY": 1308 }],
+    [{ "startX": 6599, "startY": 2503, "endX": 6712, "endY": 2616 }]
+  ]
+}

@@ -1,90 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hello Cesium</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cesium</title>
     <style>
-        html,body {height: 100%; overflow: hidden;}
+      html,
+      body {
+        height: 100%;
+        overflow: hidden;
+      }
     </style>
-   <link rel="stylesheet" href="./Script/Cesium/Widgets/widgets.css">
-   <script src="./Script/Cesium/Cesium.js"></script>
-</head>
-<body>
-    <div id='cesiumContainer' style="height:100%"></div>
-</body>
-<script type="module">
- import BDImageryProvider from './Provider/baiduImageryProvider.mjs'
+    <link rel="stylesheet" href="./Script/Cesium1.77/Widgets/widgets.css" />
+    <script src="./Script/Cesium1.77/Cesium.js"></script>
+  </head>
+  <body>
+    <div id="cesiumContainer" style="height: 100%"></div>
+  </body>
+  <script>
+    Cesium.Ion.defaultAccessToken =
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiYmQ0NDBmMy1kOWZkLTRiOWUtODNkMC02ZWI5Y2I1M2FjM2UiLCJpZCI6NDA0NjgsImlhdCI6MTYwODc5NDAyNn0.OoVB56C6gNs_sCwIpO5N65u3efc0dvYt41006iI0k00";
 
-   var map3D = {
-        defaultLocation :{
-            lng:109.955468,
-            lat: 21.183817,
-            alt: 5000
-        }
-    };
-//    Cesium.Ion.defaultAccessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiYmQ0NDBmMy1kOWZkLTRiOWUtODNkMC02ZWI5Y2I1M2FjM2UiLCJpZCI6NDA0NjgsImlhdCI6MTYwODc5NDAyNn0.OoVB56C6gNs_sCwIpO5N65u3efc0dvYt41006iI0k00"
-   
-   var terrainProvider = Cesium.createWorldTerrain({
-            requestWaterMask: true,
-            requestVertexNormals: true
-    })
-    var geeMetadata = new Cesium.GoogleEarthEnterpriseMetadata('http://www.earthenterprise.org/3d');
-    var gugeImageProvider = new Cesium.GoogleEarthEnterpriseImageryProvider({
-        metadata : geeMetadata
-    });
-
+    //    var terrainProvider = new Cesium.CesiumTerrainProvider({
+    //             url:"http://127.0.0.1:8801/tiles/tile_relase",
+    //             requestVertexNormals : true
+    //     })
     var arcgisImageProvider = new Cesium.ArcGisMapServerImageryProvider({
-        url: 'https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer',
-        enablePickFeatures: false
-     });
+      url:
+        "//services.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer",
+      enablePickFeatures: false,
+    });
+    var viewer = new Cesium.Viewer("cesiumContainer", {
+      animation: false,
+      fullscreenButton: false,
+      baseLayerPicker: true,
+      navigationHelpButton: false,
+      timeline: false,
+      selectionIndicator: false,
+      infoBox: false,
+      imageryProvider: undefined,
+      terrainProvider: Cesium.createWorldTerrain(),
+    });
+    var imageryLayers = viewer.imageryLayers;
 
-    var bingImageProvider = new Cesium.BingMapsImageryProvider({
-        url : 'https://dev.virtualearth.net',
-        key : 'get-yours-at-https://www.bingmapsportal.com/',
-        mapStyle : Cesium.BingMapsStyle.AERIAL
+    var singleImageryProvider = new Cesium.SingleTileImageryProvider({
+      url: "./img/img1.png",
+      rectangle: Cesium.Rectangle.fromDegrees(-75.0, 28.0, -67.0, 29.75),
     });
 
-    var mboxImageProvider = new Cesium.MapboxStyleImageryProvider({
-        mapId: 'mapbox.satellite',
-        styleId: 'streets-v11',
-        accessToken: 'thisIsMyAccessToken'
-    }); 
-    var baiduProvider = new BDImageryProvider({
-        url: "http://online{s}.map.bdimg.com/onlinelabel/?qt=tile&x={x}&y={y}&z={z}&styles=pl&scaler=1&p=1"
-    })
-    
-    var mtdt = new Cesium.WebMapTileServiceImageryProvider({
-        url:'http://t0.tianditu.com/img_w/wmts?',
-        layer:'img',
-        style:'default',
-        format:'tiles',
-        tileMatrixSetID:'w',
-        credit:new Cesium.Credit('天地图全球影像服务'),
-        maximumLevel:18
-        });
-    
-    var googleImageProvider = new Cesium.UrlTemplateImageryProvider({
-        url:"http://mt1.google.cn/vt/lyrs=s&hl=zh-CN&x={x}&y={y}&z={z}"
-    })
-    var viewer = new Cesium.Viewer('cesiumContainer', {
-        animation: false,
-        fullscreenButton: false,
-        baseLayerPicker:false,
-        navigationHelpButton: false,
-        timeline: false,
-        selectionIndicator: false,
-        infoBox: false,
-        imgaeryProvider:googleImageProvider,
-        // terrainProvider: terrainProvider
+    //https://t4.tianditu.gov.cn/DataServer?T=img_w&x=1671&y=890&l=11&tk=ef6151d9f0386f3b2a2fdf1d58fe9b32
+    var positron = new Cesium.UrlTemplateImageryProvider({
+      url:
+        "https://t4.tianditu.gov.cn/DataServer?T=img_w&x={x}&y={y}&l={z}&tk=ef6151d9f0386f3b2a2fdf1d58fe9b32",
+      credit:
+        "Map tiles by CartoDB, under CC BY 3.0. Data by OpenStreetMap, under ODbL.",
     });
-    // 4. Fly to a position with an orientation using heading, pitch and roll.
-    viewer.camera.flyTo({
-    destination : Cesium.Cartesian3.fromDegrees(map3D.defaultLocation.lng,map3D.defaultLocation.lat,map3D.defaultLocation.alt),
-    complete:function(){
-            console.log('fly was done') 
-     }
-});
-</script>
-
+    // Enable lighting based on sun/moon positions
+    viewer.scene.globe.enableLighting = true;
+    imageryLayers.addImageryProvider(singleImageryProvider);
+    imageryLayers.addImageryProvider(positron);
+  </script>
 </html>
