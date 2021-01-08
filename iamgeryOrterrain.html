@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cesium</title>
+    <style>
+      html,
+      body {
+        height: 100%;
+        overflow: hidden;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+    <link rel="stylesheet" href="./Script/Cesium1.77/Widgets/widgets.css" />
+    <script src="./Script/Cesium1.77/Cesium.js"></script>
+    <script src="http://api.tianditu.gov.cn/cdn/plugins/cesium/cesiumTdt.js"></script>
+  </head>
+  <body>
+    <div id="cesiumContainer" style="height: 100%"></div>
+  </body>
+  <script>
+    Cesium.Ion.defaultAccessToken =
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiYmQ0NDBmMy1kOWZkLTRiOWUtODNkMC02ZWI5Y2I1M2FjM2UiLCJpZCI6NDA0NjgsImlhdCI6MTYwODc5NDAyNn0.OoVB56C6gNs_sCwIpO5N65u3efc0dvYt41006iI0k00";
+    var subdomains = ["0", "1", "2", "3", "4", "5", "6", "7"];
+    var tdtUrl = "https://t{s}.tianditu.gov.cn/";
+    var TDU_Key = "f23bf4422313ccb008ed162483e389da";
+
+    var arcgisImageProvider = new Cesium.ArcGisMapServerImageryProvider({
+      url:
+        "//services.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer",
+      enablePickFeatures: false,
+    });
+
+    var WmtsTdt = new Cesium.WebMapTileServiceImageryProvider({
+      url:
+        "http://localhost:8801/proxy/http://t0.tianditu.com/img_w/wmts?tk=" +
+        TDU_Key +
+        "&",
+      layer: "img",
+      style: "default",
+      format: "tiles",
+      tileMatrixSetID: "w",
+      credit: new Cesium.Credit("天地图全球影像服务"),
+      maximumLevel: 18,
+    });
+    // 叠加天地图影像服务
+    var tdtIamgeryProvider = new Cesium.UrlTemplateImageryProvider({
+      url:
+        "https://t{s}.tianditu.gov.cn/DataServer?T=img_w&x={x}&y={y}&l={z}&tk=" +
+        TDU_Key,
+      subdomains: subdomains,
+      tilingScheme: new Cesium.WebMercatorTilingScheme(),
+      maximumLevel: 18,
+      credit:
+        "Map tiles by CartoDB, under CC BY 3.0. Data by OpenStreetMap, under ODbL.",
+    });
+    //添加天地图注记服务
+    var tdtNoteLayerProvider = new Cesium.WebMapTileServiceImageryProvider({
+      url:
+        "http://t0.tianditu.com/cia_w/wmts?service=wmts&tk=" +
+        TDU_Key +
+        "&request=GetTile&version=1.0.0&LAYER=cia&tileMatrixSet=w&TileMatrix={TileMatrix}&TileRow={TileRow}&TileCol={TileCol}&style=default.jpg",
+      layer: "tiandituImgMarker",
+      style: "default",
+      format: "image/jpeg",
+      tileMatrixSetID: "tiandituImgMarker",
+      show: true,
+      maximumLevel: 16,
+    });
+    // 叠加国界服务
+    var iboMap = new Cesium.UrlTemplateImageryProvider({
+      url:
+        "https://t{s}.tianditu.gov.cn/DataServer?T=ibo_w&x={x}&y={y}&l={z}&tk=" +
+        TDU_Key,
+      subdomains: subdomains,
+      tilingScheme: new Cesium.WebMercatorTilingScheme(),
+      maximumLevel: 10,
+    });
+    // 叠加谷歌影像
+    var googleImageryProvider = new Cesium.UrlTemplateImageryProvider({
+      url: "http://mt1.google.cn/vt/lyrs=s&hl=zh-CN&x={x}&y={y}&z={z}",
+    });
+    // 叠加自己下载得影像
+    var UrlTemplateTMS = new Cesium.UrlTemplateImageryProvider({
+      url: "http://localhost:8801/image_tiles/tiles/{z}/{x}/{y}.png",
+      tilingScheme: new Cesium.WebMercatorTilingScheme(),
+      format: "image/png",
+    });
+
+    //叠加本地tms切片
+    var tmsTilesProvieder = new Cesium.TileMapServiceImageryProvider({
+      url: "/image_tiles/tiles_tms",
+      fileExtension: "png",
+    });
+
+    var viewer = new Cesium.Viewer("cesiumContainer", {
+      animation: false,
+      fullscreenButton: false,
+      baseLayerPicker: true,
+      navigationHelpButton: false,
+      timeline: false,
+      selectionIndicator: false,
+      infoBox: false,
+      imageryProvider: googleImageryProvider,
+      terrainProvider: Cesium.createWorldTerrain(),
+    });
+    var imageryLayers = viewer.imageryLayers;
+    // var UrlTemplateTMSLayer=imageryLayers.addImageryProvider(UrlTemplateTMS);
+    var tmsTileslayer = imageryLayers.addImageryProvider(iboMap);
+    var imageryLayer = imageryLayers.addImageryProvider(tdtNoteLayerProvider);
+
+    //图层控制
+    imageryLayers.raiseToTop(imageryLayer);
+    imageryLayers.alpha = 0.3; //改变透明度
+    imageryLayers.brightness = 1.5; //改变亮度
+
+    // 将三维球定位到中国
+    viewer.camera.flyTo({
+      destination: Cesium.Cartesian3.fromDegrees(103.84, 31.15, 100000),
+      orientation: {
+        heading: Cesium.Math.toRadians(348.4202942851978),
+        pitch: Cesium.Math.toRadians(-89.74026687972041),
+        roll: Cesium.Math.toRadians(0),
+      },
+      complete: function callback() {
+        console.log("compete");
+      },
+    });
+  </script>
+</html>

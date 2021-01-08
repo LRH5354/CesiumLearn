@@ -3,16 +3,19 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Cesium</title>
+    <title>加载模型</title>
     <style>
       html,
       body {
         height: 100%;
         overflow: hidden;
+        margin: 0;
+        padding: 0;
       }
     </style>
     <link rel="stylesheet" href="./Script/Cesium1.77/Widgets/widgets.css" />
     <script src="./Script/Cesium1.77/Cesium.js"></script>
+    <script src="http://api.tianditu.gov.cn/cdn/plugins/cesium/cesiumTdt.js"></script>
   </head>
   <body>
     <div id="cesiumContainer" style="height: 100%"></div>
@@ -20,16 +23,13 @@
   <script>
     Cesium.Ion.defaultAccessToken =
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiYmQ0NDBmMy1kOWZkLTRiOWUtODNkMC02ZWI5Y2I1M2FjM2UiLCJpZCI6NDA0NjgsImlhdCI6MTYwODc5NDAyNn0.OoVB56C6gNs_sCwIpO5N65u3efc0dvYt41006iI0k00";
-
-    //    var terrainProvider = new Cesium.CesiumTerrainProvider({
-    //             url:"http://127.0.0.1:8801/tiles/tile_relase",
-    //             requestVertexNormals : true
-    //     })
-    var arcgisImageProvider = new Cesium.ArcGisMapServerImageryProvider({
-      url:
-        "//services.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer",
-      enablePickFeatures: false,
+    var TDU_Url = "https://t{s}.tianditu.gov.cn/";
+    var TDU_Key = "f23bf4422313ccb008ed162483e389da";
+    // 叠加谷歌影像
+    var googleImageryProvider = new Cesium.UrlTemplateImageryProvider({
+      url: "http://mt1.google.cn/vt/lyrs=s&hl=zh-CN&x={x}&y={y}&z={z}",
     });
+    // global variable
     var viewer = new Cesium.Viewer("cesiumContainer", {
       animation: false,
       fullscreenButton: false,
@@ -38,26 +38,9 @@
       timeline: false,
       selectionIndicator: false,
       infoBox: false,
-      imageryProvider: undefined,
+      imageryProvider: googleImageryProvider,
       terrainProvider: Cesium.createWorldTerrain(),
     });
-    var imageryLayers = viewer.imageryLayers;
-
-    var singleImageryProvider = new Cesium.SingleTileImageryProvider({
-      url: "./img/img1.png",
-      rectangle: Cesium.Rectangle.fromDegrees(-75.0, 28.0, -67.0, 29.75),
-    });
-
-    //https://t4.tianditu.gov.cn/DataServer?T=img_w&x=1671&y=890&l=11&tk=ef6151d9f0386f3b2a2fdf1d58fe9b32
-    var positron = new Cesium.UrlTemplateImageryProvider({
-      url:
-        "https://t4.tianditu.gov.cn/DataServer?T=img_w&x={x}&y={y}&l={z}&tk=ef6151d9f0386f3b2a2fdf1d58fe9b32",
-      credit:
-        "Map tiles by CartoDB, under CC BY 3.0. Data by OpenStreetMap, under ODbL.",
-    });
-    // Enable lighting based on sun/moon positions
-    viewer.scene.globe.enableLighting = true;
-    imageryLayers.addImageryProvider(singleImageryProvider);
-    imageryLayers.addImageryProvider(positron);
   </script>
+  <script src="./javaScript/entity.js"></script>
 </html>

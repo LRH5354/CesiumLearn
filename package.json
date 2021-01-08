@@ -42,12 +42,17 @@
   "type": "module",
   "devDependencies": {
     "aws-sdk": "^2.531.0",
+    "babel-eslint": "^10.1.0",
     "bluebird": "^3.4.6",
     "cloc": "^2.3.3",
     "compression": "^1.6.2",
-    "eslint": "^7.5.0",
+    "eslint": "^7.17.0",
+    "eslint-config-airbnb-base": "^14.2.1",
     "eslint-config-prettier": "^6.10.1",
-    "eslint-plugin-html": "^6.0.0",
+    "eslint-plugin-html": "^6.1.1",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-react": "^7.22.0",
+    "eslint-plugin-react-hooks": "^4.2.0",
     "express": "^4.15.0",
     "globby": "^11.0.0",
     "glsl-strip-comments": "^1.0.0",
@@ -130,5 +135,8 @@
     "prettier": "prettier --write \"**/*\"",
     "prettier-check": "prettier --check \"**/*\"",
     "pretty-quick": "pretty-quick"
+  },
+  "dependencies": {
+    "@types/cesium": "^1.67.13"
   }
 }
