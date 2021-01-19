@@ -47,9 +47,7 @@ viewer.camera.flyTo({
       },
     });
     viewer.zoomTo(myentity);
-    viewer.cesiumWidget.screenSpaceEventHandler.removeInputAction(
-      Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK
-    );
+
     creategltfModel("./model/barrel.gltf", 0.0);
     createglbModel("./model/barrel.glb");
   },
@@ -78,7 +76,7 @@ function creategltfModel(url, height) {
     },
   });
 
-  // viewer.trackedEntity = entity;
+  viewer.trackedEntity = entity;
 }
 
 function createglbModel(url) {

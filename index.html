@@ -25,9 +25,30 @@
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiYmQ0NDBmMy1kOWZkLTRiOWUtODNkMC02ZWI5Y2I1M2FjM2UiLCJpZCI6NDA0NjgsImlhdCI6MTYwODc5NDAyNn0.OoVB56C6gNs_sCwIpO5N65u3efc0dvYt41006iI0k00";
     var TDU_Url = "https://t{s}.tianditu.gov.cn/";
     var TDU_Key = "f23bf4422313ccb008ed162483e389da";
-    // 叠加谷歌影像
-    var googleImageryProvider = new Cesium.UrlTemplateImageryProvider({
-      url: "http://mt1.google.cn/vt/lyrs=s&hl=zh-CN&x={x}&y={y}&z={z}",
+    var subdomains = [
+      "0",
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9",
+      "10",
+      "11",
+    ];
+    // 叠加天地图影像服务
+    var tdtIamgeryProvider = new Cesium.UrlTemplateImageryProvider({
+      url:
+        "https://t{s}.tianditu.gov.cn/DataServer?T=img_w&x={x}&y={y}&l={z}&tk=" +
+        TDU_Key,
+      subdomains: subdomains,
+      tilingScheme: new Cesium.WebMercatorTilingScheme(),
+      maximumLevel: 18,
+      credit:
+        "Map tiles by CartoDB, under CC BY 3.0. Data by OpenStreetMap, under ODbL.",
     });
     // global variable
     var viewer = new Cesium.Viewer("cesiumContainer", {
@@ -38,9 +59,10 @@
       timeline: false,
       selectionIndicator: false,
       infoBox: false,
-      imageryProvider: googleImageryProvider,
+      // imageryProvider: tdtIamgeryProvider,
       terrainProvider: Cesium.createWorldTerrain(),
     });
   </script>
   <script src="./javaScript/entity.js"></script>
+  <script src="./javaScript/event.js"></script>
 </html>
