@@ -1,15 +1,15 @@
-/*eslint-env node*/
-"use strict";
+/* eslint-env node */
+
 (function () {
-  var express = require("express");
-  var compression = require("compression");
-  var fs = require("fs");
-  var url = require("url");
-  var request = require("request");
+  let express = require("express");
+  let compression = require("compression");
+  let fs = require("fs");
+  let url = require("url");
+  let request = require("request");
 
-  var gzipHeader = Buffer.from("1F8B08", "hex");
+  let gzipHeader = Buffer.from("1F8B08", "hex");
 
-  var yargs = require("yargs").options({
+  let yargs = require("yargs").options({
     port: {
       default: 8801,
       description: "Port to listen on.",
@@ -32,7 +32,7 @@
       description: "Show this help.",
     },
   });
-  var argv = yargs.argv;
+  let { argv } = yargs;
 
   if (argv.help) {
     return yargs.showHelp();
@@ -41,7 +41,7 @@
   // eventually this mime type configuration will need to change
   // https://github.com/visionmedia/send/commit/d2cb54658ce65948b0ed6e5fb5de69d022bef941
   // *NOTE* Any changes you make here must be mirrored in web.config.
-  var mime = express.static.mime;
+  let { mime } = express.static;
   mime.define(
     {
       "application/json": ["czml", "json", "geojson", "topojson"],
@@ -64,9 +64,9 @@
     true
   );
 
-  var app = express();
+  let app = express();
   app.use(compression());
-  app.use(function (req, res, next) {
+  app.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");
     res.header(
       "Access-Control-Allow-Headers",
@@ -76,15 +76,15 @@
   });
 
   function checkGzipAndNext(req, res, next) {
-    var reqUrl = url.parse(req.url, true);
-    var filePath = reqUrl.pathname.substring(1);
+    let reqUrl = url.parse(req.url, true);
+    let filePath = reqUrl.pathname.substring(1);
 
-    var readStream = fs.createReadStream(filePath, { start: 0, end: 2 });
-    readStream.on("error", function (err) {
+    let readStream = fs.createReadStream(filePath, { start: 0, end: 2 });
+    readStream.on("error", (err) => {
       next();
     });
 
-    readStream.on("data", function (chunk) {
+    readStream.on("data", (chunk) => {
       if (chunk.equals(gzipHeader)) {
         res.header("Content-Encoding", "gzip");
       }
@@ -102,8 +102,8 @@
   //   /\.vctr/,
   //   /tileset.*\.json$/,
   // ];
-  //增加terrain类型
-  var knownTilesetFormats = [
+  // 增加terrain类型
+  let knownTilesetFormats = [
     /\.b3dm/,
     /\.pnts/,
     /\.i3dm/,
@@ -119,11 +119,11 @@
   app.use(express.static(__dirname));
 
   function getRemoteUrlFromParam(req) {
-    var remoteUrl = req.params[0];
+    let remoteUrl = req.params[0];
     if (remoteUrl) {
       // add http:// to the URL if no protocol is present
       if (!/^https?:\/\//.test(remoteUrl)) {
-        remoteUrl = "http://" + remoteUrl;
+        remoteUrl = `http://${remoteUrl}`;
       }
       remoteUrl = url.parse(remoteUrl);
       // copy query string
@@ -132,12 +132,12 @@
     return remoteUrl;
   }
 
-  var dontProxyHeaderRegex = /^(?:Host|Proxy-Connection|Connection|Keep-Alive|Transfer-Encoding|TE|Trailer|Proxy-Authorization|Proxy-Authenticate|Upgrade)$/i;
+  let dontProxyHeaderRegex = /^(?:Host|Proxy-Connection|Connection|Keep-Alive|Transfer-Encoding|TE|Trailer|Proxy-Authorization|Proxy-Authenticate|Upgrade)$/i;
 
   function filterHeaders(req, headers) {
-    var result = {};
+    let result = {};
     // filter out headers that are listed in the regex above
-    Object.keys(headers).forEach(function (name) {
+    Object.keys(headers).forEach((name) => {
       if (!dontProxyHeaderRegex.test(name)) {
         result[name] = headers[name];
       }
@@ -145,17 +145,17 @@
     return result;
   }
 
-  var upstreamProxy = argv["upstream-proxy"];
-  var bypassUpstreamProxyHosts = {};
+  let upstreamProxy = argv["upstream-proxy"];
+  let bypassUpstreamProxyHosts = {};
   if (argv["bypass-upstream-proxy-hosts"]) {
-    argv["bypass-upstream-proxy-hosts"].split(",").forEach(function (host) {
+    argv["bypass-upstream-proxy-hosts"].split(",").forEach((host) => {
       bypassUpstreamProxyHosts[host.toLowerCase()] = true;
     });
   }
 
-  app.get("/proxy/*", function (req, res, next) {
+  app.get("/proxy/*", (req, res, next) => {
     // look for request like http://localhost:8080/proxy/http://example.com/file?query=1
-    var remoteUrl = getRemoteUrlFromParam(req);
+    let remoteUrl = getRemoteUrlFromParam(req);
     if (!remoteUrl) {
       // look for request like http://localhost:8080/proxy/?http%3A%2F%2Fexample.com%2Ffile%3Fquery%3D1
       remoteUrl = Object.keys(req.query)[0];
@@ -172,7 +172,7 @@
       remoteUrl.protocol = "http:";
     }
 
-    var proxy;
+    let proxy;
     if (upstreamProxy && !(remoteUrl.host in bypassUpstreamProxyHosts)) {
       proxy = upstreamProxy;
     }
@@ -184,10 +184,10 @@
         url: url.format(remoteUrl),
         headers: filterHeaders(req, req.headers),
         encoding: null,
-        proxy: proxy,
+        proxy,
       },
-      function (error, response, body) {
-        var code = 500;
+      (error, response, body) => {
+        let code = 500;
 
         if (response) {
           code = response.statusCode;
@@ -202,7 +202,7 @@
   var server = app.listen(
     argv.port,
     argv.public ? undefined : "localhost",
-    function () {
+    () => {
       if (argv.public) {
         console.log(
           "Cesium development server running publicly.  Connect to http://localhost:%d/",
@@ -217,7 +217,7 @@
     }
   );
 
-  server.on("error", function (e) {
+  server.on("error", (e) => {
     if (e.code === "EADDRINUSE") {
       console.log(
         "Error: Port %d is already in use, select a different port.",
@@ -237,15 +237,15 @@
     process.exit(1);
   });
 
-  server.on("close", function () {
+  server.on("close", () => {
     console.log("Cesium development server stopped.");
   });
 
-  var isFirstSig = true;
-  process.on("SIGINT", function () {
+  let isFirstSig = true;
+  process.on("SIGINT", () => {
     if (isFirstSig) {
       console.log("Cesium development server shutting down.");
-      server.close(function () {
+      server.close(() => {
         process.exit(0);
       });
       isFirstSig = false;

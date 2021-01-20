@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>dc框架</title>
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      #viewer-container {
+        height: 100%;
+        width: 100%;
+        padding: 0;
+        margin: 0;
+      }
+    </style>
+    <!--基础包-->
+    <script src="https://cdn.jsdelivr.net/npm/@dvgis/dc-sdk@1.14.1/dist/dc.base.min.js"></script>
+    <!--核心包-->
+    <script src="https://cdn.jsdelivr.net/npm/@dvgis/dc-sdk@1.14.1/dist/dc.core.min.js"></script>
+    <!--主要样式-->
+    <link
+      href="https://cdn.jsdelivr.net/npm/@dvgis/dc-sdk@1.14.1/dist/dc.core.min.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+  </head>
+  <body>
+    <div id="viewer-container"></div>
+    <script>
+      let viewer = undefined;
+      function initViewer() {
+        viewer = new DC.Viewer("viewer-container");
+        let key = "0f7c1d161d7352116a21aacf0e9f44c1";
+        let baselayer = DC.ImageryLayerFactory.createTdtImageryLayer({
+          key,
+          style: "img",
+        });
+        viewer.addBaseLayer(baselayer);
+      }
+      DC.ready(initViewer);
+    </script>
+  </body>
+</html>
