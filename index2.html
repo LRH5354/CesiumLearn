@@ -13,14 +13,20 @@
         padding: 0;
         margin: 0;
       }
+      html,
+      body {
+        padding: 0;
+        margin: 0;
+        height: 100%;
+      }
     </style>
     <!--基础包-->
-    <script src="https://cdn.jsdelivr.net/npm/@dvgis/dc-sdk@1.14.1/dist/dc.base.min.js"></script>
+    <script src="./libs/dc-sdk/dist/dc.base.min.js"></script>
     <!--核心包-->
-    <script src="https://cdn.jsdelivr.net/npm/@dvgis/dc-sdk@1.14.1/dist/dc.core.min.js"></script>
+    <script src="./libs/dc-sdk/dist/dc.core.min.js"></script>
     <!--主要样式-->
     <link
-      href="https://cdn.jsdelivr.net/npm/@dvgis/dc-sdk@1.14.1/dist/dc.core.min.css"
+      href="./libs/dc-sdk/dist/dc.core.min.css"
       rel="stylesheet"
       type="text/css"
     />
@@ -31,7 +37,7 @@
       let viewer = undefined;
       function initViewer() {
         viewer = new DC.Viewer("viewer-container");
-        let key = "0f7c1d161d7352116a21aacf0e9f44c1";
+        let key = "f23bf4422313ccb008ed162483e389da";
         let baselayer = DC.ImageryLayerFactory.createTdtImageryLayer({
           key,
           style: "img",
